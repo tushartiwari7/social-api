@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema(
       validate: [validator.isEmail, "Please enter a correct email."],
       unique: true,
     },
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+      unique: true,
+    },
     password: {
       type: String,
       required: [true, "Please provide a password"],
@@ -37,7 +42,7 @@ const userSchema = new mongoose.Schema(
     },
     bio: String,
     website: String,
-    location:String,
+    location: String,
     banner: {
       id: {
         type: String,
