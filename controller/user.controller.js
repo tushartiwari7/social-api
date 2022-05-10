@@ -246,7 +246,7 @@ exports.updateUserPassword = async (req, res) => {
 
 //update user
 exports.updateUserDetails = async (req, res) => {
-  const { name, email } = req.body;
+  const { name, email, bio, website, location } = req.body;
 
   try {
     const user = await User.findById(req.userId);
@@ -257,10 +257,10 @@ exports.updateUserDetails = async (req, res) => {
         .send({ success: false, message: "User not found" });
 
     let result;
+    
     if (req.files?.photo) {
       // delete photo if user send a new photo
       if (user.photo.id) await cloudinary.v2.uploader.destroy(user.photo.id);
-
       // upload the new photo
       result = await cloudinary.v2.uploader.upload(
         req.files.photo.tempFilePath,
@@ -273,18 +273,39 @@ exports.updateUserDetails = async (req, res) => {
     }
 
     // create photo object
-    photo = {
+    const photo = {
       id: result?.public_id,
       secure_url: result?.secure_url,
     };
 
+    if (req.files?.banner) {
+      // delete photo if user send a new photo
+      if (user.banner.id) await cloudinary.v2.uploader.destroy(user.banner.id);
+
+      // upload the new photo
+      result = await cloudinary.v2.uploader.upload(
+        req.files.banner.tempFilePath,
+        {
+          folder: "user-banners",
+        }
+      );
+    }
+
+    const banner = {
+      id: result?.public_id,
+      secure_url: result?.secure_url,
+    };
     // update user in db
     const newUser = await User.findByIdAndUpdate(
       user.id,
       {
-        name: name ? name : user.name,
-        email: email ? email : user.email,
+        name: name || user.name,
+        email: email || user.email,
         photo: photo.id ? photo : user.photo,
+        banner: banner.id ? banner : user.banner,
+        bio,
+        website,
+        location,
       },
       { new: true }
     );

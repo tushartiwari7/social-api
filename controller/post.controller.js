@@ -52,7 +52,8 @@ exports.addPost = async (req, res) => {
 exports.getPosts = async (req, res) => {
   try {
     // get all videos from db
-    const posts = await Post.find();
+    const posts = await Post.find()
+      .populate("user", "name photo");
     // if no videos found return 404
     if (!posts && posts.length === 0)
       return res
@@ -70,9 +71,8 @@ exports.getPosts = async (req, res) => {
 exports.getPost = async (req, res) => {
   const { postId } = req.params;
   try {
-    const post = await Post.findById(postId, {}, { lean: true }).populate(
-      "user"
-    );
+    const post = await Post.findById(postId, {}, { lean: true })
+      .populate("user", "name photo")
     if (!post)
       return res
         .status(404)
@@ -88,11 +88,8 @@ exports.getPost = async (req, res) => {
 
 exports.getPostsByUser = async (req, res) => {
   try {
-    const posts = await Post.find(
-      { user: req.userId },
-      {},
-      { lean: true }
-    ).populate("user");
+    const posts = await Post.find({ user: req.userId }, {}, { lean: true })
+      .populate("user", "name photo");
     if (!posts || posts.length === 0)
       return res
         .status(404)
@@ -156,11 +153,9 @@ exports.getUserFeed = async (req, res) => {
       user: {
         $in: followings,
       },
-    });
+    }).populate("user", "name photo");
     res.status(200).send({ success: true, posts });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
 };
-
-// Post where ->user is in my following list

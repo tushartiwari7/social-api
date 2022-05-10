@@ -36,6 +36,8 @@ const userSchema = new mongoose.Schema(
       },
     },
     bio: String,
+    website: String,
+    location:String,
     banner: {
       id: {
         type: String,
