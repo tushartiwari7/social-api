@@ -20,7 +20,7 @@ app.use(
 );
 
 //cors middleware
-app.use(cors(corsConFig));
+app.use(cors());
 
 // import all routes
 const user = require("./routes/user.routes");

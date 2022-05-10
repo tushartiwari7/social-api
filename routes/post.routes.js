@@ -16,7 +16,7 @@ router
   .post(isAuthenticated, addPost)
   .get(isAuthenticated, getPosts);
 
-router.route("/posts/feed").get(isAuthenticated, getUserFeed)
+router.route("/posts/feed").get(isAuthenticated, getUserFeed);
 router
   .route("/post/:postId")
   .get(isAuthenticated, getPost)
