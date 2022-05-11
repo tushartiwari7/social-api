@@ -1,5 +1,6 @@
 const Like = require("../model/like.model");
 const Post = require("../model/post.model");
+
 exports.addLike = async (req, res) => {
   const { postId } = req.body;
   if (!postId)
@@ -17,6 +18,9 @@ exports.addLike = async (req, res) => {
       {
         $inc: {
           "statistics.likeCount": 1,
+        },
+        $push: {
+          likes: req.userId,
         },
       }
     );
@@ -44,6 +48,9 @@ exports.removeLike = async (req, res) => {
       {
         $inc: {
           "statistics.likeCount": -1,
+        },
+        $pull: {
+          likes: req.userId,
         },
       }
     );

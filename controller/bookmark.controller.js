@@ -2,7 +2,7 @@ const Bookmark = require("../model/bookmark.model");
 exports.addToBookmark = async (req, res) => {
   const { postId } = req.body;
   try {
-    const isExist =await  Bookmark.exists({ post: postId, user: req.userId });
+    const isExist = await Bookmark.exists({ post: postId, user: req.userId });
     if (isExist)
       return res
         .status(409)
@@ -32,7 +32,13 @@ exports.removeBookmark = async (req, res) => {
 
 exports.getBookmarks = async (req, res) => {
   try {
-    const bookmarks = await Bookmark.find({ user: req.userId }).populate("post");
+    const bookmarks = await Bookmark.find({ user: req.userId }).populate({
+      path: "post",
+      populate: {
+        path: "user",
+        select: 'photo name'
+      },
+    });
     if (!bookmarks || bookmarks.length === 0)
       return res
         .status(404)
