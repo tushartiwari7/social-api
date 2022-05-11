@@ -13,7 +13,7 @@ router
   .get(isAuthenticated, getBookmarks);
 
 router
-  .route("/user/bookmark/:bookmarkId")
+  .route("/user/bookmark/:postId")
   .delete(isAuthenticated, removeBookmark);
 
 module.exports = router;

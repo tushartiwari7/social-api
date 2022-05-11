@@ -20,9 +20,9 @@ exports.addToBookmark = async (req, res) => {
 };
 
 exports.removeBookmark = async (req, res) => {
-  const { bookmarkId } = req.params;
+  const { postId } = req.params;
   try {
-    const bookmark = await Bookmark.findByIdAndDelete({ _id: bookmarkId });
+    const bookmark = await Bookmark.findOneAndDelete({ post: postId });
     if (!bookmark) return res.status(400).send({ success: false, bookmark });
     res.status(200).send({ success: true, bookmark });
   } catch (error) {
@@ -32,7 +32,7 @@ exports.removeBookmark = async (req, res) => {
 
 exports.getBookmarks = async (req, res) => {
   try {
-    const bookmarks = await Bookmark.find({ user: req.userId });
+    const bookmarks = await Bookmark.find({ user: req.userId }).populate("post");
     if (!bookmarks || bookmarks.length === 0)
       return res
         .status(404)
