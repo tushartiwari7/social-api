@@ -25,7 +25,13 @@ exports.addLike = async (req, res) => {
       }
     );
     let newLike = await Like.create({ post: postId, user: req.userId });
-    newLike = await newLike.populate("post");
+    newLike = await newLike.populate({
+      path: "post",
+      populate: {
+        path: "user",
+        select: "photo name",
+      },
+    });
     if (!newLike)
       return res
         .status(404)

@@ -53,7 +53,8 @@ exports.getPosts = async (req, res) => {
   try {
     // get all videos from db
     const posts = await Post.find()
-      .populate("user", "name photo");
+      .populate("user", "name photo")
+      .sort({ createdAt: -1 });
     // if no videos found return 404
     if (!posts && posts.length === 0)
       return res
@@ -71,8 +72,10 @@ exports.getPosts = async (req, res) => {
 exports.getPost = async (req, res) => {
   const { postId } = req.params;
   try {
-    const post = await Post.findById(postId, {}, { lean: true })
-      .populate("user", "name photo")
+    const post = await Post.findById(postId, {}, { lean: true }).populate(
+      "user",
+      "name photo"
+    );
     if (!post)
       return res
         .status(404)
@@ -88,8 +91,11 @@ exports.getPost = async (req, res) => {
 
 exports.getPostsByUser = async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.userId }, {}, { lean: true })
-      .populate("user", "name photo");
+    const posts = await Post.find(
+      { user: req.userId },
+      {},
+      { lean: true }
+    ).populate("user", "name photo");
     if (!posts || posts.length === 0)
       return res
         .status(404)
@@ -150,10 +156,19 @@ exports.getUserFeed = async (req, res) => {
   try {
     const { followings } = await User.findById(req.userId);
     const posts = await Post.find({
-      user: {
-        $in: followings,
-      },
-    }).populate("user", "name photo");
+      $or: [
+        {
+          user: {
+            $in: followings,
+          },
+        },
+        {
+          user: req.userId,
+        },
+      ],
+    })
+      .populate("user", "name photo")
+      .sort({ createdAt: -1 });
     res.status(200).send({ success: true, posts });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
