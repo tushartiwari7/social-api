@@ -29,11 +29,8 @@ router
   .post(isAuthenticated, updateUserDetails);
 router.route("/user/follow").put(isAuthenticated, followUser);
 router.route("/user/un_follow").patch(isAuthenticated, unFollowUser);
-<<<<<<< HEAD
-=======
 router.route("/user/followers").get(isAuthenticated, getFollowers);
 router.route("/user/followings").get(isAuthenticated, getFollowings);
 router.route("/users").get(isAuthenticated, getUsers);
->>>>>>> 68928376cbf49b9eba7d34656c5c74ffa8ee65e5
 
 module.exports = router;
