@@ -29,6 +29,8 @@ const postSchema = new mongoose.Schema(
         default: "",
       },
     ],
+    
+    likes: [mongoose.Schema.Types.ObjectId],
 
     statistics: {
       viewCount: {
