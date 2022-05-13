@@ -354,6 +354,7 @@ exports.followUser = async (req, res) => {
       },
       { new: true }
     );
+
     if (!user || !followee)
       return res.status(400).send({
         success: false,
@@ -414,6 +415,51 @@ exports.unFollowUser = async (req, res) => {
       });
     res.status(200).send({ success: true, user, followee });
   } catch (error) {
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.getFollowers = async (req, res) => {
+  try {
+    const followers = await User.find({
+      followings: {
+        $in: [mongoose.Types.ObjectId(req.userId)],
+      },
+    });
+    res.send({ success: true, followers });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.getFollowings = async (req, res) => {
+  try {
+    const followings = await User.find({
+      followers: {
+        $in: [mongoose.Types.ObjectId(req.userId)],
+      },
+    });
+    res.send({ success: true, followings });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find({
+      _id: {
+        $ne: req.userId,
+      },
+      followers:{
+        $nin:[req.userId]
+      }
+    }).limit(20);
+    res.send({ success: true, users });
+  } catch (error) {
+    console.log(error);
     res.status(500).send({ success: false, message: error.message });
   }
 };
