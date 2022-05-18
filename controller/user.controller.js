@@ -449,17 +449,34 @@ exports.getFollowings = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find({
-      _id: {
-        $ne: req.userId,
-      },
-      followers:{
-        $nin:[req.userId]
-      }
-    }).limit(20);
+    const users = await User.find().limit(20);
     res.send({ success: true, users });
   } catch (error) {
     console.log(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    res.send({ success: true, user });
+  } catch (error) {
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.searchUsers = async (req, res) => {
+  const { name } = req.query;
+  try {
+    const users = await User.find({
+      name: {
+        $regex: new RegExp(".*" + name + ".*", "i"),
+      },
+    });
+    res.send({ success: true, users });
+  } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
 };

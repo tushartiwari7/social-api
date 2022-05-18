@@ -32,5 +32,7 @@ router.route("/user/un_follow").patch(isAuthenticated, unFollowUser);
 router.route("/user/followers").get(isAuthenticated, getFollowers);
 router.route("/user/followings").get(isAuthenticated, getFollowings);
 router.route("/users").get(isAuthenticated, getUsers);
+router.route("/search_users").get(isAuthenticated, searchUsers);
+router.route("/user/:userId").get(isAuthenticated, getUser);
 
 module.exports = router;

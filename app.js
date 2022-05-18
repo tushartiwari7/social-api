@@ -30,10 +30,10 @@ const comment = require("./routes/comment.routes");
 const bookmark = require("./routes/bookmark.routes");
 
 //routes middlewares
+app.use("/api/v1", bookmark); // bookmark routes
 app.use("/api/v1", user); // user routes
 app.use("/api/v1", post); // post routes
 app.use("/api/v1", like); // like routes
 app.use("/api/v1", like); // like routes
-app.use("/api/v1", bookmark); // bookmark routes
 
 module.exports = app;
