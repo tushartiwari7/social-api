@@ -13,6 +13,8 @@ const {
   getFollowers,
   getFollowings,
   getUsers,
+  searchUsers,
+  getUser,
 } = require("../controller/user.controller");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const router = express.Router();
