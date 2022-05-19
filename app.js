@@ -2,7 +2,6 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
-const corsConFig = require("./config/cors-config");
 const app = express();
 require("dotenv").config();
 require("./config/database").connect();
@@ -34,6 +33,6 @@ app.use("/api/v1", bookmark); // bookmark routes
 app.use("/api/v1", user); // user routes
 app.use("/api/v1", post); // post routes
 app.use("/api/v1", like); // like routes
-app.use("/api/v1", like); // like routes
+app.use("/api/v1", comment); // comment routes
 
 module.exports = app;

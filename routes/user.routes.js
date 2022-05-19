@@ -12,6 +12,8 @@ const {
   unFollowUser,
   getFollowers,
   getFollowings,
+  getUserFollowers,
+  getUserFollowings,
   getUsers,
   searchUsers,
   getUser,
@@ -29,12 +31,18 @@ router.route("/user/update_password").post(isAuthenticated, updateUserPassword);
 router
   .route("/user/update_user_details")
   .post(isAuthenticated, updateUserDetails);
-router.route("/user/follow").put(isAuthenticated, followUser);
+router.route("/user/follow/:followeeId").put(isAuthenticated, followUser);
 router.route("/user/un_follow").patch(isAuthenticated, unFollowUser);
 router.route("/user/followers").get(isAuthenticated, getFollowers);
 router.route("/user/followings").get(isAuthenticated, getFollowings);
 router.route("/users").get(isAuthenticated, getUsers);
 router.route("/search_users").get(isAuthenticated, searchUsers);
 router.route("/user/:userId").get(isAuthenticated, getUser);
+
+// testing a new route
+router.route("/user/followers/:userId").get(isAuthenticated, getUserFollowers);
+router
+  .route("/user/followings/:userId")
+  .get(isAuthenticated, getUserFollowings);
 
 module.exports = router;

@@ -317,7 +317,7 @@ exports.updateUserDetails = async (req, res) => {
 };
 
 exports.followUser = async (req, res) => {
-  const { followeeId } = req.body;
+  const { followeeId } = req.params;
   try {
     const user = await User.findOneAndUpdate(
       {
@@ -463,6 +463,36 @@ exports.getUser = async (req, res) => {
     const user = await User.findById(userId);
     res.send({ success: true, user });
   } catch (error) {
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.getUserFollowers = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const followers = await User.find({
+      followings: {
+        $in: [mongoose.Types.ObjectId(userId)],
+      },
+    });
+    res.send({ success: true, followers });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.getUserFollowings = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const followings = await User.find({
+      followers: {
+        $in: [mongoose.Types.ObjectId(userId)],
+      },
+    });
+    res.send({ success: true, followings });
+  } catch (error) {
+    console.log(error);
     res.status(500).send({ success: false, message: error.message });
   }
 };
