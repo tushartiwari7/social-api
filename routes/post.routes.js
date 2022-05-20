@@ -18,7 +18,7 @@ router
 
 router.route("/tweets/feed").get(isAuthenticated, getUserFeed);
 router
-  .route("/tweets/:postId")
+  .route("/tweets/:tweetId")
   .get(isAuthenticated, getPost)
   .patch(isAuthenticated, updateViewCount)
   .delete(isAuthenticated, deletePost);

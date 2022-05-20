@@ -34,7 +34,7 @@ exports.addPost = async (req, res) => {
       url: videoResponse.secure_url,
     };
 
-    const post = await Post.create({
+    const tweet = await Post.create({
       user: req.userId,
       description,
       image,
@@ -42,7 +42,7 @@ exports.addPost = async (req, res) => {
       videoURL,
     });
 
-    res.status(201).send({ success: true, post });
+    res.status(201).send({ success: true, tweet });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
@@ -52,17 +52,17 @@ exports.addPost = async (req, res) => {
 exports.getPosts = async (req, res) => {
   try {
     // get all videos from db
-    const posts = await Post.find()
+    const tweets = await Post.find()
       .populate("user", "name photo")
       .sort({ createdAt: -1 });
     // if no videos found return 404
-    if (!posts && posts.length === 0)
+    if (!tweets && tweets.length === 0)
       return res
         .status(404)
-        .send({ success: false, message: "No posts found" });
+        .send({ success: false, message: "No tweets found" });
 
     // return all videos
-    res.status(200).send({ success: true, posts });
+    res.status(200).send({ success: true, tweets });
   } catch (error) {
     // if error return 500
     res.status(500).send({ success: false, message: error.message });
@@ -70,19 +70,19 @@ exports.getPosts = async (req, res) => {
 };
 
 exports.getPost = async (req, res) => {
-  const { postId } = req.params;
+  const { tweetId } = req.params;
   try {
-    const post = await Post.findById(postId, {}, { lean: true }).populate(
+    const tweet = await Post.findById(tweetId, {}, { lean: true }).populate(
       "user",
       "name photo"
     );
-    if (!post)
+    if (!tweet)
       return res
         .status(404)
-        .send({ success: false, message: "No post found with this id" });
+        .send({ success: false, message: "No tweet found with this id" });
 
     // return  a video
-    res.status(200).send({ success: true, post });
+    res.status(200).send({ success: true, tweet });
   } catch (error) {
     // if error return 500
     res.status(500).send({ success: false, message: error.message });
@@ -91,18 +91,18 @@ exports.getPost = async (req, res) => {
 
 exports.getPostsByUser = async (req, res) => {
   try {
-    const posts = await Post.find(
+    const tweet = await Post.find(
       { user: req.userId },
       {},
       { lean: true }
     ).populate("user", "name photo");
-    if (!posts || posts.length === 0)
+    if (!tweet || tweet.length === 0)
       return res
         .status(404)
-        .send({ success: false, message: "No posts found for this user" });
+        .send({ success: false, message: "No tweet found for this user" });
 
     // return  a video
-    res.status(200).send({ success: true, posts });
+    res.status(200).send({ success: true, tweet });
   } catch (error) {
     // if error return 500
     res.status(500).send({ success: false, message: error.message });
@@ -110,10 +110,10 @@ exports.getPostsByUser = async (req, res) => {
 };
 
 exports.updateViewCount = async (req, res) => {
-  const { postId } = req.params;
+  const { tweetId } = req.params;
   try {
-    const post = await Post.findByIdAndUpdate(
-      { _id: postId },
+    const tweet = await Post.findByIdAndUpdate(
+      { _id: tweetId },
       {
         $inc: {
           "statistics.viewCount": 1,
@@ -123,12 +123,12 @@ exports.updateViewCount = async (req, res) => {
         new: true,
       }
     );
-    if (!post)
+    if (!tweet)
       return res
         .status(404)
         .send({ success: false, message: "No post found with this id" });
     // return  a video
-    res.status(200).send({ success: true, post });
+    res.status(200).send({ success: true, tweet });
   } catch (error) {
     // if error return 500
     res.status(500).send({ success: false, message: error.message });
@@ -136,16 +136,16 @@ exports.updateViewCount = async (req, res) => {
 };
 
 exports.deletePost = async (req, res) => {
-  const { postId } = req.params;
+  const { tweetId } = req.params;
   try {
-    const post = await Post.findByIdAndDelete({ _id: postId });
-    if (!post)
+    const tweet = await Post.findByIdAndDelete({ _id: tweetId });
+    if (!tweet)
       return res
         .status(404)
         .send({ success: false, message: "No posts found for this user id" });
 
     // return  a video
-    res.status(200).send({ success: true, post });
+    res.status(200).send({ success: true, tweet });
   } catch (error) {
     // if error return 500
     res.status(500).send({ success: false, message: error.message });
@@ -155,7 +155,7 @@ exports.deletePost = async (req, res) => {
 exports.getUserFeed = async (req, res) => {
   try {
     const { followings } = await User.findById(req.userId);
-    const posts = await Post.find({
+    const tweets = await Post.find({
       $or: [
         {
           user: {
@@ -169,7 +169,7 @@ exports.getUserFeed = async (req, res) => {
     })
       .populate("user", "name photo")
       .sort({ createdAt: -1 });
-    res.status(200).send({ success: true, posts });
+    res.status(200).send({ success: true, tweets });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
