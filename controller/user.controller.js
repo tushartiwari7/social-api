@@ -82,13 +82,10 @@ exports.login = async (req, res) => {
         .send({ success: false, message: "Email or password does not match" });
 
     //generate token
-    const { token, options } = cookieToken(user);
-    user.password = undefined;
+    const { token } = cookieToken(user);
+    delete user.password;
     //send response
-    res
-      .status(200)
-      .cookie("token", token, options)
-      .json({ success: true, user, token });
+    res.status(200).json({ success: true, user, token });
   } catch (error) {
     return res.status(400).send({ success: false, message: error.message });
   }
@@ -176,10 +173,9 @@ exports.resetPassword = async (req, res) => {
     await user.save();
 
     //generate token
-    const { token, options } = cookieToken(user);
 
     //send response
-    res.status(200).cookie("token", token, options).send({
+    res.status(200).send({
       success: true,
       user,
       token,
@@ -354,7 +350,6 @@ exports.followUser = async (req, res) => {
       },
       { new: true }
     );
-
     if (!user || !followee)
       return res.status(400).send({
         success: false,
@@ -367,7 +362,7 @@ exports.followUser = async (req, res) => {
 };
 
 exports.unFollowUser = async (req, res) => {
-  const { followeeId } = req.body;
+  const { followeeId } = req.params;
   try {
     const user = await User.findOneAndUpdate(
       {

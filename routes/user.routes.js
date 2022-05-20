@@ -32,7 +32,7 @@ router
   .route("/user/update_user_details")
   .post(isAuthenticated, updateUserDetails);
 router.route("/user/follow/:followeeId").put(isAuthenticated, followUser);
-router.route("/user/un_follow").patch(isAuthenticated, unFollowUser);
+router.route("/user/unfollow/:followeeId").patch(isAuthenticated, unFollowUser);
 router.route("/user/followers").get(isAuthenticated, getFollowers);
 router.route("/user/followings").get(isAuthenticated, getFollowings);
 router.route("/users").get(isAuthenticated, getUsers);
