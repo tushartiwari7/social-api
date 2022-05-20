@@ -12,13 +12,13 @@ const isAuthenticated = require("../middleware/isAuthenticated");
 const router = express.Router();
 
 router
-  .route("/posts")
+  .route("/tweets")
   .post(isAuthenticated, addPost)
   .get(isAuthenticated, getPosts);
 
-router.route("/posts/feed").get(isAuthenticated, getUserFeed);
+router.route("/tweets/feed").get(isAuthenticated, getUserFeed);
 router
-  .route("/post/:postId")
+  .route("/tweets/:postId")
   .get(isAuthenticated, getPost)
   .patch(isAuthenticated, updateViewCount)
   .delete(isAuthenticated, deletePost);
