@@ -2,7 +2,12 @@ const cloudinary = require("cloudinary");
 const Post = require("../model/post.model");
 const User = require("../model/user.model");
 exports.addPost = async (req, res) => {
-  const { description = "", tags = [] } = req.body;
+  const {
+    description = "",
+    tags = [],
+    userPhoto = "",
+    userName = "",
+  } = req.body;
   if (!description)
     return res
       .status(400)
@@ -41,8 +46,19 @@ exports.addPost = async (req, res) => {
       tags,
       videoURL,
     });
-
-    res.status(201).send({ success: true, tweet });
+    res.status(201).send({
+      success: true,
+      tweet: {
+        ...tweet._doc,
+        user: {
+          _id: req.userId,
+          name: userName,
+          photo: {
+            secure_url: userPhoto,
+          },
+        },
+      },
+    });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
