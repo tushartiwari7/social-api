@@ -2,7 +2,7 @@ const Like = require("../model/like.model");
 const Post = require("../model/post.model");
 
 exports.addLike = async (req, res) => {
-  const { postId } = req.body;
+  const { postId } = req.params;
   if (!postId)
     return res.status(400).send({ success: false, error: "Provide a post ID" });
 
@@ -32,6 +32,7 @@ exports.addLike = async (req, res) => {
         select: "photo name",
       },
     });
+
     if (!newLike)
       return res
         .status(404)

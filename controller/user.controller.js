@@ -44,11 +44,8 @@ exports.signup = async (req, res) => {
     return res.status(400).send({ success: false, message });
   }
 
-  const { token, options } = cookieToken(user);
-  res
-    .status(201)
-    .cookie("token", token, options)
-    .json({ user, token, success: true });
+  const { token } = cookieToken(user);
+  res.status(201).json({ user, token, success: true });
 };
 
 //LOGIN

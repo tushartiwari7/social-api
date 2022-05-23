@@ -4,17 +4,14 @@ const isAuthenticated = require("../middleware/isAuthenticated");
 const {
   addLike,
   removeLike,
-  getLikedPostByUser
+  getLikedPostByUser,
 } = require("../controller/like.controller");
 
+router.route("/tweet/likes").get(isAuthenticated, getLikedPostByUser);
+
 router
-  .route("/user/likes")
-  .get(isAuthenticated, getLikedPostByUser)
+  .route("/tweet/like/:postId")
   .post(isAuthenticated, addLike)
-
-router
-  .route("/user/like/:postId")
   .delete(isAuthenticated, removeLike);
-
 
 module.exports = router;
