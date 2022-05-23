@@ -6,6 +6,7 @@ const {
   updateViewCount,
   deletePost,
   getUserFeed,
+  getPostsByUser,
 } = require("../controller/post.controller");
 
 const isAuthenticated = require("../middleware/isAuthenticated");
@@ -17,6 +18,8 @@ router
   .get(isAuthenticated, getPosts);
 
 router.route("/tweets/feed").get(isAuthenticated, getUserFeed);
+router.route("/tweets/userTweets/:userId").get(isAuthenticated, getPostsByUser);
+
 router
   .route("/tweets/:tweetId")
   .get(isAuthenticated, getPost)

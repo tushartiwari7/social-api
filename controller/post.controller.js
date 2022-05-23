@@ -106,19 +106,20 @@ exports.getPost = async (req, res) => {
 };
 
 exports.getPostsByUser = async (req, res) => {
+  const { userId } = req.params;
   try {
-    const tweet = await Post.find(
-      { user: req.userId },
+    const tweets = await Post.find(
+      { user: userId },
       {},
       { lean: true }
     ).populate("user", "name photo");
-    if (!tweet || tweet.length === 0)
+    if (!tweets || tweets.length === 0)
       return res
         .status(404)
         .send({ success: false, message: "No tweet found for this user" });
 
     // return  a video
-    res.status(200).send({ success: true, tweet });
+    res.status(200).send({ success: true, tweets });
   } catch (error) {
     // if error return 500
     res.status(500).send({ success: false, message: error.message });
