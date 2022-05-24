@@ -1,5 +1,6 @@
 const Comment = require("../model/comment.model");
 const User = require("../model/user.model");
+const Post = require("../model/post.model");
 
 exports.addComment = async (req, res) => {
   const { postId, parentId, body } = req.body;
@@ -10,6 +11,14 @@ exports.addComment = async (req, res) => {
         .status(401)
         .send({ success: false, message: "You need to login first" });
     const { name, photo } = user;
+    await Post.findByIdAndUpdate(
+      { _id: postId },
+      {
+        $inc: {
+          "statistics.commentCount": 1,
+        },
+      }
+    );
     const comment = await Comment.create({
       user: req.userId,
       post: postId,
@@ -36,8 +45,8 @@ exports.getComments = async (req, res) => {
     const comments = await Comment.find({ user: req.userId, post: postId });
     if (!comments)
       return res
-        .status(404)
-        .send({ success: false, message: "No comments found" });
+        .status(200)
+        .send({ success: true, comments: [], message: "No comments found" });
     res.status(200).send({ success: true, comments });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
@@ -66,7 +75,8 @@ exports.updateComment = async (req, res) => {
       { _id: commentId },
       {
         body,
-      }, {new:true}
+      },
+      { new: true }
     );
     if (!comment)
       return res
