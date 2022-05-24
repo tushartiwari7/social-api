@@ -116,8 +116,12 @@ exports.getPostsByUser = async (req, res) => {
     ).populate("user", "name photo");
     if (!tweets || tweets.length === 0)
       return res
-        .status(404)
-        .send({ success: false, message: "No tweet found for this user" });
+        .status(200)
+        .send({
+          success: true,
+          tweets: [],
+          message: "No tweet found for this user",
+        });
 
     // return  a video
     res.status(200).send({ success: true, tweets });
