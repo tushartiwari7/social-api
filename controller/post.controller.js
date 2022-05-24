@@ -92,10 +92,11 @@ exports.getPost = async (req, res) => {
       "user",
       "name photo"
     );
+
     if (!tweet)
       return res
-        .status(404)
-        .send({ success: false, message: "No tweet found with this id" });
+        .status(200)
+        .send({ success: true, tweet: [], message: "No Tweets found" });
 
     // return  a video
     res.status(200).send({ success: true, tweet });

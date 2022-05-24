@@ -1,6 +1,6 @@
 const Bookmark = require("../model/bookmark.model");
 exports.addToBookmark = async (req, res) => {
-  const { postId } = req.body;
+  const { postId } = req.params;
   try {
     const isExist = await Bookmark.exists({ post: postId, user: req.userId });
     if (isExist)
@@ -8,12 +8,20 @@ exports.addToBookmark = async (req, res) => {
         .status(409)
         .send({ success: false, message: "Already in bookmark" });
     const bookmark = await Bookmark.create({ user: req.userId, post: postId });
-    if (!bookmark)
+    const populatedBookmark = await bookmark.populate({
+      path: "post",
+      populate: {
+        path: "user",
+        select: "photo name",
+      },
+    });
+
+    if (!populatedBookmark)
       return res
         .status(400)
         .send({ success: false, message: "Failed to create bookmark" });
 
-    res.status(200).send({ success: true, bookmark });
+    res.status(200).send({ success: true, bookmark: populatedBookmark });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
@@ -36,9 +44,10 @@ exports.getBookmarks = async (req, res) => {
       path: "post",
       populate: {
         path: "user",
-        select: 'photo name'
+        select: "photo name",
       },
     });
+
     if (!bookmarks || bookmarks.length === 0)
       return res
         .status(404)
