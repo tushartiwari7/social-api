@@ -1,6 +1,8 @@
 const cloudinary = require("cloudinary");
+const Bookmark = require("../model/bookmark.model");
 const Post = require("../model/post.model");
 const User = require("../model/user.model");
+
 exports.addPost = async (req, res) => {
   const {
     description = "",
@@ -160,6 +162,7 @@ exports.updateViewCount = async (req, res) => {
 exports.deletePost = async (req, res) => {
   const { tweetId } = req.params;
   try {
+    await Bookmark.findOneAndDelete({ post: tweetId });
     const tweet = await Post.findByIdAndDelete({ _id: tweetId });
     if (!tweet)
       return res
