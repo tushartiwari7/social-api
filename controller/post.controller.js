@@ -117,13 +117,11 @@ exports.getPostsByUser = async (req, res) => {
       { lean: true }
     ).populate("user", "name photo");
     if (!tweets || tweets.length === 0)
-      return res
-        .status(200)
-        .send({
-          success: true,
-          tweets: [],
-          message: "No tweet found for this user",
-        });
+      return res.status(200).send({
+        success: true,
+        tweets: [],
+        message: "No tweet found for this user",
+      });
 
     // return  a video
     res.status(200).send({ success: true, tweets });
@@ -195,6 +193,59 @@ exports.getUserFeed = async (req, res) => {
       .populate("user", "name photo")
       .sort({ createdAt: -1 });
     res.status(200).send({ success: true, tweets });
+  } catch (error) {
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+exports.updatePost = async (req, res) => {
+  console.log("editpost");
+  const { description = "" } = req.body;
+  const { tweetId } = req.params;
+  console.log(description);
+  if (!description)
+    return res
+      .status(400)
+      .send({ success: false, message: "Please write something" });
+
+  try {
+    let imageResponse = {};
+    let videoResponse = {};
+    if (req.files?.image) {
+      imageResponse = await cloudinary.v2.uploader.upload(
+        req.files.image.tempFilePath,
+        { folder: "post/image" }
+      );
+    }
+
+    if (req.files?.video) {
+      videoResponse = await cloudinary.v2.uploader.upload(
+        req.files.video.tempFilePath,
+        { folder: "post/video", resource_type: "video" }
+      );
+    }
+
+    const image = {
+      id: imageResponse.public_id,
+      url: imageResponse.secure_url,
+    };
+    const videoURL = {
+      id: videoResponse.public_id,
+      url: videoResponse.secure_url,
+    };
+
+    const postObj = {
+      description,
+      image,
+      videoURL,
+    };
+
+    if (postObj.image.url === undefined) delete postObj.image;
+    if (postObj.videoURL.url === undefined) delete postObj.videoURL;
+    const tweet = await Post.findByIdAndUpdate({ _id: tweetId }, postObj, {
+      new: true,
+    }).populate("user", "name photo location");
+    res.status(201).send({ success: true, tweet });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
