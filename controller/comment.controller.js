@@ -44,7 +44,7 @@ exports.addComment = async (req, res) => {
 exports.getComments = async (req, res) => {
   const { postId } = req.params;
   try {
-    const comments = await Comment.find({ user: req.userId, post: postId });
+    const comments = await Comment.find({ post: postId });
     if (!comments)
       return res
         .status(200)
