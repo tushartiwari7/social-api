@@ -20,12 +20,16 @@ const commentSchema = mongoose.Schema({
     required: [true, "Write something"],
   },
   photoUrl: {
-      type:String,
-      default:""
+    type: String,
+    default: "",
   },
   userName: {
     type: String,
     required: [true, "User name is required"],
+  },
+  comments: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Comment",
   },
 });
 

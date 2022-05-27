@@ -11,6 +11,22 @@ exports.addComment = async (req, res) => {
         .status(401)
         .send({ success: false, message: "You need to login first" });
     const { name, photo } = user;
+
+    const comment = await Comment.create({
+      user: req.userId,
+      post: postId,
+      parentId: parentId ? parentId : null,
+      body,
+      photoUrl: photo?.secure_url,
+      userName: name,
+      comments: [],
+    });
+
+    if (!comment)
+      return res
+        .status(400)
+        .send({ success: false, message: "Failed to create comment" });
+
     await Post.findByIdAndUpdate(
       { _id: postId },
       {
@@ -19,20 +35,6 @@ exports.addComment = async (req, res) => {
         },
       }
     );
-    const comment = await Comment.create({
-      user: req.userId,
-      post: postId,
-      parentId: parentId ? parentId : null,
-      body,
-      photoUrl: photo?.secure_url,
-      userName: name,
-    });
-
-    if (!comment)
-      return res
-        .status(400)
-        .send({ success: false, message: "Failed to create comment" });
-
     res.status(201).send({ success: true, comment });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
@@ -73,9 +75,7 @@ exports.updateComment = async (req, res) => {
   try {
     const comment = await Comment.findByIdAndUpdate(
       { _id: commentId },
-      {
-        body,
-      },
+      { body },
       { new: true }
     );
     if (!comment)
