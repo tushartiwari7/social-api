@@ -50,8 +50,8 @@ exports.getBookmarks = async (req, res) => {
 
     if (!bookmarks || bookmarks.length === 0)
       return res
-        .status(404)
-        .send({ success: false, message: "No bookmarks found" });
+        .status(200)
+        .send({ success: true, bookmarks: [], message: "No bookmarks found" });
     res.status(200).send({ success: true, bookmarks });
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });

@@ -44,5 +44,4 @@ router.route("/user/followers/:userId").get(isAuthenticated, getUserFollowers);
 router
   .route("/user/followings/:userId")
   .get(isAuthenticated, getUserFollowings);
-
 module.exports = router;
